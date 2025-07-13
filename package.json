@@ -1,14 +1,13 @@
 {
-  "name": "chinito-scraper",
+  "name": "simple-link-scraper",
   "version": "1.0.0",
-  "description": "Scraping Links via Puppeteer",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "postinstall": "npx puppeteer install"
+    "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "puppeteer": "^22.15.0"
+    "axios": "^1.10.0",
+    "cheerio": "^1.1.0",
+    "express": "^4.21.2"
   }
 }

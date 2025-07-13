@@ -1,24 +1,31 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
+const axios = require('axios');
+const cheerio = require('cheerio');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.get('/get-links', async (req, res) => {
   try {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    const targetUrl = req.query.url;
+    if (!targetUrl) {
+      return res.status(400).json({ success: false, message: "Missing 'url' query parameter" });
+    }
+
+    const response = await axios.get(targetUrl);
+    const $ = cheerio.load(response.data);
+
+    let links = new Set();
+    $('a').each((i, el) => {
+      const href = $(el).attr('href');
+      if (href && href.startsWith('http')) {
+        links.add(href);
+      }
     });
-    const page = await browser.newPage();
-    await page.goto('https://chinito.ir/shop/', { waitUntil: 'networkidle2' });
-    const links = await page.evaluate(() =>
-      Array.from(document.querySelectorAll('a.product-image-link'))
-           .map(el => el.href)
-    );
-    await browser.close();
-    res.json({ success: true, links });
-  } catch (err) {
-    res.json({ success: false, error: err.message });
+
+    res.json({ success: true, links: Array.from(links) });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
