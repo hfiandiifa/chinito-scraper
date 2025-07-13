@@ -3,7 +3,8 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
+
 
 app.get('/get-links', async (req, res) => {
   try {
